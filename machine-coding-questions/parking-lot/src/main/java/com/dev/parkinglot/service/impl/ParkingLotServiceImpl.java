@@ -4,6 +4,7 @@ import com.dev.parkinglot.enums.DisplayType;
 import com.dev.parkinglot.enums.ParkingLotCreatorType;
 import com.dev.parkinglot.enums.SlotAllocationType;
 import com.dev.parkinglot.enums.VehicleType;
+import com.dev.parkinglot.exception.EmptySlotNotFoundException;
 import com.dev.parkinglot.exception.NotFoundException;
 import com.dev.parkinglot.factory.ParkingLotCreatorFactory;
 import com.dev.parkinglot.factory.ParkingLotDisplayFactory;
@@ -37,7 +38,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public ParkingLot createParkingLot(ParkingLotInitializationRequest parkingLotInitializationRequest, ParkingLotCreatorType parkingLotCreatorType) {
-        ParkingLot parkingLot = parkingLotCreatorFactory.getParkingLotCreator(parkingLotCreatorType).initialize(parkingLotInitializationRequest);
+        ParkingLot parkingLot = parkingLotCreatorFactory.getParkingLotCreator(parkingLotCreatorType)
+                .initialize(parkingLotInitializationRequest);
         return parkingLotRepository.save(parkingLot);
     }
 
@@ -51,7 +53,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
                     ticket = ticketRepository.save(ticket);
                     slot.setOccupied(true);
                     return ticket;
-                }).orElse(null);
+                }).orElseThrow(() -> new EmptySlotNotFoundException("Parking Lot Full"));
     }
 
     private ParkingLot getParkingLot(String parkingLotId) {
@@ -63,13 +65,14 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     }
 
     @Override
-    public void unParkVehicle(String ticketId) {
+    public Ticket unParkVehicle(String ticketId) {
         Ticket ticket = ticketRepository.getById(ticketId);
         if (Objects.isNull(ticket)) {
             throw new NotFoundException(String.format("Ticket not found with id %s", ticketId));
         }
         ticket.slot().setOccupied(false);
         ticketRepository.delete(ticketId);
+        return ticket;
     }
 
     @Override

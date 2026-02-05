@@ -50,7 +50,7 @@ Multiple lines with each line containing a command.
 Possible commands:
 
 - create_parking_lot <parking_lot_id> <no_of_floors> <no_of_slots_per_floor><br/>
-- park_vehicle <vehicle_type> <reg_no> <color><br/>
+- park_vehicle <parking_lot_id> <vehicle_type> <reg_no> <color><br/>
 - unpark_vehicle <ticket_id><br/>
 - display <display_type> <vehicle_type><br/>
   - Possible values of display_type: free_count, free_slots, occupied_slots

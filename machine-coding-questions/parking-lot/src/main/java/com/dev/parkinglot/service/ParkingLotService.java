@@ -15,7 +15,7 @@ public interface ParkingLotService {
 
     Ticket parkVehicle(String parkingLotId, Vehicle vehicle, SlotAllocationType slotAllocationType);
 
-    void unParkVehicle(String ticketId);
+    Ticket unParkVehicle(String ticketId);
 
     void displayParkingLotStatus(String parkingLotId, VehicleType vehicleType, DisplayType displayType);
 }
